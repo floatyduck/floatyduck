@@ -11,4 +11,8 @@ function FloatyDuck() {
   	this.y += amount;
   }
 
+  this.Duck.prototype.moveX = function(amount) {
+  	this.x += amount;
+  }
+
 }
