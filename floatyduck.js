@@ -7,4 +7,8 @@ function FloatyDuck() {
     this.y = 15;
   }
 
+  this.Duck.prototype.moveY = function(amount) {
+  	this.y += amount;
+  }
+
 }
