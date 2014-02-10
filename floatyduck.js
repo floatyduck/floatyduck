@@ -1,6 +1,6 @@
-$ = $ ? $ : function(a) { return document.getElementById(a); }
-
 function FloatyDuck() {
+
+  $ = $ ? $ : function(a) { return document.getElementById(a); }
 
   this.Duck = function() {
     this.x = 5;
