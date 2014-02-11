@@ -5,7 +5,7 @@ function FloatyDuck() {
 
   this.frameCount = 0;
     
-  this.scroll_rate = 1;
+  this.scroll_rate = 1.5;
   this.size = { w: 320, h: 480 };
   
   this.scroll_size = { w: this.size.w+10, h: this.size.h-2 }
@@ -42,6 +42,10 @@ FloatyDuck.prototype.init = function() {
   this.Duck.moveY(this.size.h/2);
   
   this.Keyboard = new Keyboard();
+  
+  if(this.DEBUG) {
+    this.html.css('overflow','visible');
+  }
 }
 
 // This method updates the world (i.e., input, physics, etc)
@@ -58,8 +62,8 @@ FloatyDuck.prototype.update = function() {
     //this.Duck.moveY(-1);
   } else if (this.Keyboard.isDownPressed()) {
     if( this.registeredDown == false ) {
-      this.Duck.y_speed = 6;
       this.registeredDown = true;
+      this.Duck.y_speed = 6;
     }
   }
   
@@ -81,7 +85,7 @@ FloatyDuck.prototype.render = function() {
 
   if(this.DEBUG) {
   
-    // show duck position
+    // show duck position; this adds a *lot* of html elements so it quickly leads to slowdown
     this.scroll.append($('<div class="duckpos"></div>').css('top',this.Duck.y+'px').css('left',this.Duck.x+'px'));
   
     // Record current frame render for debug
@@ -191,7 +195,7 @@ Duck.prototype.render = function() {
 
 Duck.prototype.update = function() {
   this.y_speed += this.buoyancy;
-  this.y += this.y_speed;
+  this.moveY(this.y_speed);
 }
 
 
