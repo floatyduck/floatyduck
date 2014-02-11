@@ -5,8 +5,11 @@ function FloatyDuck() {
 
   this.frameCount = 0;
     
-  this.scroll = 1;
+  this.scroll_rate = 1;
   this.size = { w: 320, h: 480 };
+  
+  this.scroll_size = { w: this.size.w+10, h: this.size.h-2 }
+  this.scroll_pos = { t: 0, l: 0 }
 }
 
 // Initialize
@@ -17,34 +20,58 @@ FloatyDuck.prototype.init = function() {
 
   // generate game area
   this.html = $('<div id="play_area"></div>');
+  this.scroll = $('<div id="scroll"></div>');
   
-  // init properties for play area
-  this.html.css('width',this.size.w+'px').css('height',this.size.h+'px');
+  // set structure
   this.html.appendTo($('body'));
+  this.scroll.appendTo(this.html);
   
   this.Duck = new Duck();
-  this.html.append(this.Duck.html);
-
+  this.scroll.append(this.Duck.html);
+  
+  // position duck in center
   this.Duck.moveX(this.size.w/2);
   this.Duck.moveY(this.size.h/2);
   
   this.Keyboard = new Keyboard();
 }
-  
+
 // This method updates the world (i.e., input, physics, etc)
 FloatyDuck.prototype.update = function() {
+
+  // update scroll area
+  this.scroll_size.w += this.scroll_rate;
+  this.scroll_pos.l -= this.scroll_rate;
+  
+  // update duck pos
+  this.Duck.moveX(this.scroll_rate);
+
   if(this.Keyboard.isUpPressed()) {
     this.Duck.moveY(-1);
   } else if (this.Keyboard.isDownPressed()) {
     this.Duck.moveY(1);
   }
+  
 }
 
 // This method draws the current scene
 FloatyDuck.prototype.render = function() {
   this.Duck.render();
+  
+  // render play area
+  this.html.css('width',this.size.w+'px').css('height',this.size.h+'px');
+  
+  // render scroll area
+  this.scroll.css('width',this.scroll_size.w+'px')
+            .css('height',this.scroll_size.h+'px')
+            .css('top',this.scroll_pos.t+'px')
+            .css('left',this.scroll_pos.l+'px');
 
   if(this.DEBUG) {
+  
+    // show duck position
+    this.scroll.append($('<div class="duckpos"></div>').css('top',this.Duck.y+'px').css('left',this.Duck.x+'px'));
+  
     // Record current frame render for debug
     this.frameCount++;
 
