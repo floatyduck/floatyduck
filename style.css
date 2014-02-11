@@ -47,6 +47,12 @@ table {
   border-spacing: 0;
 }
 
+body {
+
+  padding-left: 50px;
+  
+  }
+
 #debug_data {
   float: right;
   display: hidden;
@@ -54,11 +60,29 @@ table {
 }
 
 #play_area {
+  border: solid 1px black;
+  position: relative;
+  /*overflow: hidden;*/
+  z-index: 0;
+}
+
+#scroll {
   border: solid 1px blue;
   position: relative;
+  z-index: 1;
 }
 
 #duck {
   border: solid 1px green;
   position: absolute;
+  z-index: 5;
+}
+.duckpos {
+  width: 1px;
+  height: 1px;
+  position: absolute;
+  background: red;
+  top: 0;
+  left: 0;
+  z-index: 2;
 }
