@@ -25,6 +25,9 @@ FloatyDuck.prototype.init = function() {
   this.Duck = new Duck();
   this.html.append(this.Duck.html);
 
+  this.Duck.moveX(this.size.w/2);
+  this.Duck.moveY(this.size.h/2);
+  
   this.Keyboard = new Keyboard();
 }
   
@@ -118,8 +121,8 @@ Keyboard.prototype.isDownPressed = function() {
 
 // duck object
 Duck = function() {
-  this.x = 5;
-  this.y = 15;
+  this.x = 0;
+  this.y = 0;
   
   this.y_speed = 0;
   this.buoyancy = -0.5;
@@ -128,13 +131,6 @@ Duck = function() {
     
   // generate duck
   this.html = $('<div id="duck"></div>');
-  
-  // init properties for duck
-  this.html.css('width',this.size.w+'px')
-          .css('height',this.size.h+'px')
-          .css('top',this.y+'px')
-          .css('left',this.x+'px');
-  
 }
   
 Duck.prototype.moveY = function(amount) {
@@ -146,6 +142,18 @@ Duck.prototype.moveX = function(amount) {
 }
 
 Duck.prototype.render = function() {
-  this.html.css('top',this.y+'px')
-          .css('left',this.x+'px');
+  this.html.css('width',this.size.w+'px')
+          .css('height',this.size.h+'px')
+          .css('top',this.getPosY()+'px')
+          .css('left',this.getPosX()+'px');
+}
+
+// get coordinates for positioning; real x and y are considered centre of duck
+Duck.prototype.getPosY = function() {
+  real_y = this.y;
+  return (real_y - Math.round(this.size.h/2));
+}
+Duck.prototype.getPosX = function() {
+  real_x = this.x;
+  return (real_x - Math.round(this.size.w/2));
 }
