@@ -50,6 +50,7 @@ table {
 #debug_data {
   float: right;
   display: hidden;
+  text-align: right;
 }
 
 #play_area {
