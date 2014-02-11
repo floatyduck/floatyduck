@@ -10,6 +10,14 @@ function FloatyDuck() {
   
   this.scroll_size = { w: this.size.w+10, h: this.size.h-2 }
   this.scroll_pos = { t: 0, l: 0 }
+  
+  // need to track only once per press
+  this.registeredDown = false;
+  $(document).keyup(function(e) {
+    switch(e.keyCode) {
+      case 40: this.registeredDown = false; break;
+    }
+  }.bind(this))
 }
 
 // Initialize
@@ -47,15 +55,19 @@ FloatyDuck.prototype.update = function() {
   this.Duck.moveX(this.scroll_rate);
 
   if(this.Keyboard.isUpPressed()) {
-    this.Duck.moveY(-1);
+    //this.Duck.moveY(-1);
   } else if (this.Keyboard.isDownPressed()) {
-    this.Duck.moveY(1);
+    if( this.registeredDown == false ) {
+      this.Duck.y_speed = 6;
+      this.registeredDown = true;
+    }
   }
   
 }
 
 // This method draws the current scene
 FloatyDuck.prototype.render = function() {
+  this.Duck.update();
   this.Duck.render();
   
   // render play area
@@ -152,7 +164,7 @@ Duck = function() {
   this.y = 0;
   
   this.y_speed = 0;
-  this.buoyancy = -0.5;
+  this.buoyancy = -0.2;
   
   this.size = { w: 50, h: 50 };
     
@@ -162,10 +174,12 @@ Duck = function() {
   
 Duck.prototype.moveY = function(amount) {
   this.y += amount;
+  if(this.y < 0) this.y = 0;
 }
 
 Duck.prototype.moveX = function(amount) {
   this.x += amount;
+  if(this.x < 0) this.x = 0;
 }
 
 Duck.prototype.render = function() {
@@ -175,12 +189,24 @@ Duck.prototype.render = function() {
           .css('left',this.getPosX()+'px');
 }
 
+Duck.prototype.update = function() {
+  this.y_speed += this.buoyancy;
+  this.y += this.y_speed;
+}
+
+
 // get coordinates for positioning; real x and y are considered centre of duck
 Duck.prototype.getPosY = function() {
   real_y = this.y;
-  return (real_y - Math.round(this.size.h/2));
+  pos_y = real_y - Math.round(this.size.h/2);
+  if(pos_y < 0) pos_y = 0;
+  
+  return pos_y;
 }
 Duck.prototype.getPosX = function() {
   real_x = this.x;
-  return (real_x - Math.round(this.size.w/2));
+  pos_x = real_x - Math.round(this.size.w/2);
+  if(pos_x < 0) pos_x = 0;
+  
+  return pos_x;
 }
