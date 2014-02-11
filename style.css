@@ -47,6 +47,11 @@ table {
   border-spacing: 0;
 }
 
+#debug_data {
+  float: right;
+  display: hidden;
+}
+
 #play_area {
   border: solid 1px blue;
   position: relative;

@@ -1,25 +1,20 @@
 // game engine
 function FloatyDuck() {
-
+  this.DEBUG = true;
   this.UPDATES_PER_SECOND = 60;
+
+  this.frameCount = 0;
     
   this.scroll = 1;
   this.size = { w: 320, h: 480 };
-  
-}
-  
-// This method updates the world (i.e., input, physics, etc)
-FloatyDuck.prototype.update = function() {
-  // TODO
 }
 
-// This method draws the current scene
-FloatyDuck.prototype.render = function() {
-  // TODO
-}
+// Initialize
+FloatyDuck.prototype.init = function() {
+  if(this.DEBUG) {
+    $('#debug_data').css('display', 'block');
+  }
 
-FloatyDuck.prototype.run = function() {
-  
   // generate game area
   this.html = $('<div id="play_area"></div>');
   
@@ -29,6 +24,29 @@ FloatyDuck.prototype.run = function() {
   
   this.Duck = new Duck();
   this.html.append(this.Duck.html);
+}
+  
+// This method updates the world (i.e., input, physics, etc)
+FloatyDuck.prototype.update = function() {
+  // TODO
+}
+
+// This method draws the current scene
+FloatyDuck.prototype.render = function() {
+
+  if(this.DEBUG) {
+    // Record current frame render for debug
+    this.frameCount++;
+
+    // Write out debug data
+    $('#frame_count').html(this.frameCount);
+    // TODO: Duck X and Y
+    // TODO: Canvas size
+  }
+}
+
+FloatyDuck.prototype.run = function() {
+  this.init();
   
   var updateEvery = 1000 / this.UPDATES_PER_SECOND;
   var lastUpdate = Date.now();
