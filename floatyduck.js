@@ -33,6 +33,7 @@ FloatyDuck.prototype.update = function() {
 
 // This method draws the current scene
 FloatyDuck.prototype.render = function() {
+  this.Duck.render();
 
   if(this.DEBUG) {
     // Record current frame render for debug
@@ -75,8 +76,8 @@ Duck = function() {
   // init properties for duck
   this.html.css('width',this.size.w+'px')
           .css('height',this.size.h+'px')
-          .css('top',this.x+'px')
-          .css('left',this.y+'px');
+          .css('top',this.y+'px')
+          .css('left',this.x+'px');
   
 }
   
@@ -86,4 +87,9 @@ Duck.prototype.moveY = function(amount) {
 
 Duck.prototype.moveX = function(amount) {
   this.x += amount;
+}
+
+Duck.prototype.render = function() {
+  this.html.css('top',this.y+'px')
+          .css('left',this.x+'px');
 }
