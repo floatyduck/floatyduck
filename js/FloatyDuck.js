@@ -5,7 +5,7 @@ function FloatyDuck() {
   // call extender class
   FloatyElement.apply(this,['play_area']);
   
-  this.DEBUG = true;
+  this.DEBUG = false;
   this.UPDATES_PER_SECOND = 60;
   this.DELAY_BEFORE_START = 6000;
 
