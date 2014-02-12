@@ -74,7 +74,7 @@ body {
 
 #duck {
   background: #fff;
-  border: solid 1px green;
+  background: url('img/duck.png') top left no-repeat;
   position: absolute;
   z-index: 5;
 }
