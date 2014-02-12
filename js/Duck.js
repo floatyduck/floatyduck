@@ -7,7 +7,7 @@ function Duck() {
   // set defaults
   this.y_speed = 0;
   this.buoyancy = -0.2;
-  this.size = { w: 50, h: 50 };
+  this.size = { w: 41, h: 35 };
 }
 
 Duck.prototype.update = function() {
