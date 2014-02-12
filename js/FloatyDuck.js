@@ -1,15 +1,17 @@
 // game engine
+FloatyDuck.prototype = new FloatyElement();
+
 function FloatyDuck() {
+  // call extender class
+  FloatyElement.apply(this,['play_area']);
+  
   this.DEBUG = true;
   this.UPDATES_PER_SECOND = 60;
+  this.DELAY_BEFORE_START = 6000;
 
   this.frameCount = 0;
     
-  this.scroll_rate = 1.5;
   this.size = { w: 320, h: 480 };
-  
-  this.scroll_size = { w: this.size.w+10, h: this.size.h-2 }
-  this.scroll_pos = { t: 0, l: 0 }
   
   // need to track only once per press
   this.registeredDown = false;
@@ -27,24 +29,26 @@ FloatyDuck.prototype.init = function() {
   }
 
   // generate game area
-  this.html = $('<div id="play_area"></div>');
-  this.scroll = $('<div id="scroll"></div>');
+  this.Scroll = new Scroll();
+  
+  this.Scroll.setSize('w',this.getSize('w')*1+10);
+  this.Scroll.setSize('h',this.getSize('h')-2);
   
   // set structure
-  this.html.appendTo($('body'));
-  this.scroll.appendTo(this.html);
+  $('body').append(this.obj);
+  this.obj.append(this.Scroll.obj);
   
   this.Duck = new Duck();
-  this.scroll.append(this.Duck.html);
+  this.Scroll.obj.append(this.Duck.obj);
   
   // position duck in center
-  this.Duck.moveX(this.size.w/2);
-  this.Duck.moveY(this.size.h/2);
+  this.Duck.setPos('x',this.getSize('w')/2);
+  this.Duck.setPos('y',this.getSize('h')/2);
   
   this.Keyboard = new Keyboard();
   
   if(this.DEBUG) {
-    this.html.css('overflow','visible');
+    this.obj.css('overflow','visible');
   }
 }
 
@@ -52,18 +56,14 @@ FloatyDuck.prototype.init = function() {
 FloatyDuck.prototype.update = function() {
 
   // update scroll area
-  this.scroll_size.w += this.scroll_rate;
-  this.scroll_pos.l -= this.scroll_rate;
-  
-  // update duck pos
-  this.Duck.moveX(this.scroll_rate);
+  this.Scroll.update();
+  this.Duck.update();
+  this.Duck.movePos('x',this.Scroll.getRate());
 
-  if(this.Keyboard.isUpPressed()) {
-    //this.Duck.moveY(-1);
-  } else if (this.Keyboard.isDownPressed()) {
+  if (this.Keyboard.isDownPressed()) {
     if( this.registeredDown == false ) {
       this.registeredDown = true;
-      this.Duck.y_speed = 6;
+      this.Duck.setSpeed(6);
     }
   }
   
@@ -71,22 +71,16 @@ FloatyDuck.prototype.update = function() {
 
 // This method draws the current scene
 FloatyDuck.prototype.render = function() {
-  this.Duck.update();
   this.Duck.render();
+  this.Scroll.render();
   
   // render play area
-  this.html.css('width',this.size.w+'px').css('height',this.size.h+'px');
-  
-  // render scroll area
-  this.scroll.css('width',this.scroll_size.w+'px')
-            .css('height',this.scroll_size.h+'px')
-            .css('top',this.scroll_pos.t+'px')
-            .css('left',this.scroll_pos.l+'px');
+  this.obj.css('width',this.getSize('w')+'px').css('height',this.getSize('h')+'px');
 
   if(this.DEBUG) {
   
     // show duck position; this adds a *lot* of html elements so it quickly leads to slowdown
-    this.scroll.append($('<div class="duckpos"></div>').css('top',this.Duck.y+'px').css('left',this.Duck.x+'px'));
+    this.Scroll.obj.append($('<div class="duckpos"></div>').css('top',this.Duck.getRealPos('y')+'px').css('left',this.Duck.getRealPos('x')+'px'));
   
     // Record current frame render for debug
     this.frameCount++;
@@ -114,9 +108,7 @@ FloatyDuck.prototype.run = function() {
   
   setInterval(function() {
     this.update();
-    
     this.render();
-  
   }.bind(this), updateEvery);
 }
 
@@ -160,57 +152,4 @@ Keyboard.prototype.isUpPressed = function() {
 
 Keyboard.prototype.isDownPressed = function() {
   return this.downPressed;
-}
-
-// duck object
-Duck = function() {
-  this.x = 0;
-  this.y = 0;
-  
-  this.y_speed = 0;
-  this.buoyancy = -0.2;
-  
-  this.size = { w: 50, h: 50 };
-    
-  // generate duck
-  this.html = $('<div id="duck"></div>');
-}
-  
-Duck.prototype.moveY = function(amount) {
-  this.y += amount;
-  if(this.y < 0) this.y = 0;
-}
-
-Duck.prototype.moveX = function(amount) {
-  this.x += amount;
-  if(this.x < 0) this.x = 0;
-}
-
-Duck.prototype.render = function() {
-  this.html.css('width',this.size.w+'px')
-          .css('height',this.size.h+'px')
-          .css('top',this.getPosY()+'px')
-          .css('left',this.getPosX()+'px');
-}
-
-Duck.prototype.update = function() {
-  this.y_speed += this.buoyancy;
-  this.moveY(this.y_speed);
-}
-
-
-// get coordinates for positioning; real x and y are considered centre of duck
-Duck.prototype.getPosY = function() {
-  real_y = this.y;
-  pos_y = real_y - Math.round(this.size.h/2);
-  if(pos_y < 0) pos_y = 0;
-  
-  return pos_y;
-}
-Duck.prototype.getPosX = function() {
-  real_x = this.x;
-  pos_x = real_x - Math.round(this.size.w/2);
-  if(pos_x < 0) pos_x = 0;
-  
-  return pos_x;
 }
