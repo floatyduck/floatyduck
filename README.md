@@ -14,5 +14,6 @@ Tips for keeping it improv
 ---
 1. Don't get married to any ideas
 2. Resist planning
-3. Keep commits tiny
+3. Keep commits tiny  
+3.1. Whoops lol
 4. There is no right or wrong
