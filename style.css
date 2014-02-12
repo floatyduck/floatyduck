@@ -60,19 +60,20 @@ body {
 }
 
 #play_area {
-  border: solid 1px black;
   position: relative;
   overflow: hidden;
   z-index: 0;
 }
 
 #scroll {
-  border: solid 1px blue;
   position: relative;
   z-index: 1;
+  background: url('img/bg.png') top left repeat-x;
+  background-size: auto 100%;
 }
 
 #duck {
+  background: #fff;
   border: solid 1px green;
   position: absolute;
   z-index: 5;
