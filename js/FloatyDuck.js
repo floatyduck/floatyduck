@@ -28,24 +28,33 @@ FloatyDuck.prototype.init = function() {
     $('#debug_data').css('display', 'block');
   }
 
+  this.elems = [];
+
   // generate game area
   this.Scroll = new Scroll();
-  
   this.Scroll.setSize('w',this.getSize('w')*1+10);
   this.Scroll.setSize('h',this.getSize('h')-2);
+  this.elems.push(this.Scroll);
   
   // set structure
   $('body').append(this.obj);
-  this.obj.append(this.Scroll.obj);
 
-  this.gameStarted = false;
-
+  // create duck and position in center
   this.Duck = new Duck();
-  this.obj.append(this.Duck.obj);
-  
-  // position duck in center
   this.Duck.setPos('x',this.getSize('w')/2);
   this.Duck.setPos('y',this.getSize('h')/2);
+  this.elems.push(this.Duck);
+
+  this.StartScreen = new StartScreen();
+  this.StartScreen.setPos('x',this.getSize('w')/2);
+  this.StartScreen.setPos('y',this.getSize('h')/2);
+  this.elems.push(this.StartScreen);
+
+  this.elems.forEach(function(elem) {
+    this.obj.append(elem.obj);
+  }.bind(this))
+  
+  this.started = false;
   
   this.Keyboard = new Keyboard();
   
@@ -56,17 +65,15 @@ FloatyDuck.prototype.init = function() {
 
 // This method updates the world (i.e., input, physics, etc)
 FloatyDuck.prototype.update = function() {
-
-  // update scroll area
-  this.Scroll.update();
-
-  if(this.gameStarted) {
-    this.Duck.update();
-  }
+  this.elems.forEach(function(elem) {
+    elem.update();
+  })
 
   if (this.Keyboard.isDownPressed()) {
-    if(!this.gameStarted) {
-      this.gameStarted = true;
+    if(!this.started) {
+      this.Duck.start();
+      this.StartScreen.hide();
+      this.started = true;
     }
 
     if( this.registeredDown == false ) {
@@ -79,8 +86,9 @@ FloatyDuck.prototype.update = function() {
 
 // This method draws the current scene
 FloatyDuck.prototype.render = function() {
-  this.Duck.render();
-  this.Scroll.render();
+  this.elems.forEach(function(elem) {
+    elem.render();
+  })
   
   // render play area
   this.obj.css('width',this.getSize('w')+'px').css('height',this.getSize('h')+'px');

@@ -8,9 +8,15 @@ function Duck() {
   this.y_speed = 0;
   this.buoyancy = -0.2;
   this.size = { w: 41, h: 35 };
+
+  this.started = false;
 }
 
 Duck.prototype.update = function() {
+
+  if(!this.started) {
+    return;
+  }
   
   // apply a constant upward velocity
   this.changeSpeed(this.buoyancy);
@@ -18,6 +24,10 @@ Duck.prototype.update = function() {
   // float
   this.movePos('y',this.getSpeed());
   
+}
+
+Duck.prototype.start = function() {
+  this.started = true;
 }
 
 // position based on centre of duck

@@ -62,7 +62,7 @@ body {
 #play_area {
   position: relative;
   overflow: hidden;
-  z-index: 0;
+  z-index: -1;
 }
 
 #scroll {
@@ -86,4 +86,14 @@ body {
   top: 0;
   left: 0;
   z-index: 2;
+}
+
+#start_screen {
+  position: absolute;
+  z-index: 10;
+  text-align: center;
+  color: #eee;
+  font-size: 56px;
+  font-family: "Comic Sans MS", cursive, sans-serif; /* #FontOfTheYearAward */
+  text-transform: uppercase;
 }

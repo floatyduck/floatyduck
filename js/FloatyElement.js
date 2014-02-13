@@ -6,6 +6,8 @@ function FloatyElement( id ) {
   
 }
 
+FloatyElement.prototype.update = function() { }
+
 FloatyElement.prototype.render = function() {
   this.obj.css('width',this.getSize('w')+'px')
           .css('height',this.getSize('h')+'px')
