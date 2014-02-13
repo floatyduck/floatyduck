@@ -78,7 +78,7 @@ FloatyDuck.prototype.update = function() {
 
     if( this.registeredDown == false ) {
       this.registeredDown = true;
-      this.Duck.setSpeed(6);
+      this.Duck.setSpeed(5);
     }
   }
   
