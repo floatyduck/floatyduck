@@ -93,9 +93,6 @@ FloatyDuck.prototype.render = function() {
     // Write out debug data
     $('#frame_count').html(this.frameCount);
     var activeKeys = "";
-    if(this.Keyboard.upPressed) {
-      activeKeys = activeKeys + "UP, ";
-    }
     if(this.Keyboard.downPressed) {
       activeKeys += "DOWN, ";
     }
@@ -119,40 +116,19 @@ FloatyDuck.prototype.run = function() {
 
 // Keyboard input manager
 Keyboard = function() {
-  this.leftPressed = false;
-  this.rightPressed = false;
-  this.upPressed = false;
   this.downPressed = false;
 
   $(document).keydown(function(e) {
     switch(e.keyCode) {
-      case 37: this.leftPressed = true; break;
-      case 38: this.upPressed = true; break;
-      case 39: this.rightPressed = true; break;
       case 40: this.downPressed = true; break;
     }
   }.bind(this))
 
   $(document).keyup(function(e) {
     switch(e.keyCode) {
-      case 37: this.leftPressed = false; break;
-      case 38: this.upPressed = false; break;
-      case 39: this.rightPressed = false; break;
       case 40: this.downPressed = false; break;
     }
   }.bind(this))
-}
-
-Keyboard.prototype.isLeftPressed = function() {
-  return this.leftPressed;
-}
-
-Keyboard.prototype.isRightPressed = function() {
-  return this.rightPressed;
-}
-
-Keyboard.prototype.isUpPressed = function() {
-  return this.upPressed;
 }
 
 Keyboard.prototype.isDownPressed = function() {
