@@ -6,7 +6,7 @@ function StartScreen() {
 
   this.obj.html("Tap DOWN<br /><br />to Start");
 
-  this.size = { w: 200, h: 280 };
+  this.size = { w: 300, h: 280 };
 }
 
 // position based on centre
