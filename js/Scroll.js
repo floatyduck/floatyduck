@@ -5,7 +5,7 @@ function Scroll() {
   FloatyElement.apply(this,['scroll']);
   
   // set defaults
-  this.rate = 1;
+  this.rate = 1.4;
 }
 
 Scroll.prototype.update = function() {
