@@ -5,7 +5,7 @@ function FloatyDuck() {
   // call extender class
   FloatyElement.apply(this,['play_area']);
   
-  this.DEBUG = false;
+  this.DEBUG = true;
   this.UPDATES_PER_SECOND = 60;
   this.DELAY_BEFORE_START = 6000;
 
@@ -39,7 +39,7 @@ FloatyDuck.prototype.init = function() {
   this.obj.append(this.Scroll.obj);
   
   this.Duck = new Duck();
-  this.Scroll.obj.append(this.Duck.obj);
+  this.obj.append(this.Duck.obj);
   
   // position duck in center
   this.Duck.setPos('x',this.getSize('w')/2);
@@ -58,7 +58,6 @@ FloatyDuck.prototype.update = function() {
   // update scroll area
   this.Scroll.update();
   this.Duck.update();
-  this.Duck.movePos('x',this.Scroll.getRate());
 
   if (this.Keyboard.isDownPressed()) {
     if( this.registeredDown == false ) {
@@ -78,9 +77,6 @@ FloatyDuck.prototype.render = function() {
   this.obj.css('width',this.getSize('w')+'px').css('height',this.getSize('h')+'px');
 
   if(this.DEBUG) {
-  
-    // show duck position; this adds a *lot* of html elements so it quickly leads to slowdown
-    this.Scroll.obj.append($('<div class="duckpos"></div>').css('top',this.Duck.getRealPos('y')+'px').css('left',this.Duck.getRealPos('x')+'px'));
   
     // Record current frame render for debug
     this.frameCount++;
