@@ -37,7 +37,9 @@ FloatyDuck.prototype.init = function() {
   // set structure
   $('body').append(this.obj);
   this.obj.append(this.Scroll.obj);
-  
+
+  this.gameStarted = false;
+
   this.Duck = new Duck();
   this.obj.append(this.Duck.obj);
   
@@ -57,9 +59,16 @@ FloatyDuck.prototype.update = function() {
 
   // update scroll area
   this.Scroll.update();
-  this.Duck.update();
+
+  if(this.gameStarted) {
+    this.Duck.update();
+  }
 
   if (this.Keyboard.isDownPressed()) {
+    if(!this.gameStarted) {
+      this.gameStarted = true;
+    }
+
     if( this.registeredDown == false ) {
       this.registeredDown = true;
       this.Duck.setSpeed(6);
