@@ -8,7 +8,8 @@ function Duck() {
   this.y_speed = 0;
   this.buoyancy = -0.2;
   this.size = { w: 41, h: 35 };
-
+  this.lookDown = false;
+  this.lastFlap = 0;
   this.started = false;
 }
 
@@ -24,10 +25,24 @@ Duck.prototype.update = function() {
   // float
   this.movePos('y',this.getSpeed());
   
+  if(this.lookDown) {
+    if(this.getPos('y') <= this.lastFlap) {
+      this.lookDown = false;
+      this.obj.removeClass('look_down');
+    } else {
+      this.obj.addClass('look_down');
+    }
+  }
 }
 
 Duck.prototype.start = function() {
   this.started = true;
+}
+
+Duck.prototype.flap = function() {
+  this.setSpeed(5);
+  this.lookDown = true;
+  this.lastFlap = this.getPos('y');
 }
 
 // position based on centre of duck

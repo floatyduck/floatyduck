@@ -77,7 +77,16 @@ body {
   background: url('img/duck.png') top left no-repeat;
   position: absolute;
   z-index: 5;
+  transition: transform 0.2s;
+  -webkit-transition: -webkit-transform 0.2s;
 }
+
+.look_down {
+  transform: rotate(25deg);
+  -ms-transform:rotate(25deg);
+  -webkit-transform:rotate(25deg);
+}
+
 .duckpos {
   width: 1px;
   height: 1px;
