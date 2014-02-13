@@ -6,7 +6,7 @@ function Duck() {
   
   // set defaults
   this.y_speed = 0;
-  this.buoyancy = -0.2;
+  this.buoyancy = -0.4;
   this.size = { w: 41, h: 35 };
   this.lookDown = false;
   this.lastFlap = 0;
@@ -40,7 +40,7 @@ Duck.prototype.start = function() {
 }
 
 Duck.prototype.flap = function() {
-  this.setSpeed(5);
+  this.setSpeed(8);
   this.lookDown = true;
   this.lastFlap = this.getPos('y');
 }
