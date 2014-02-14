@@ -8,11 +8,14 @@ function FloatyDuck() {
   this.DEBUG = true;
   this.UPDATES_PER_SECOND = 60;
   this.DELAY_BEFORE_START = 6000;
+  this.INTERVAL_ID = 0;
 
   this.frameCount = 0;
     
   this.size = { w: 320, h: 480 };
   
+  this.setBoundMod( {'b': -35 } );
+    
   // need to track only once per press
   this.registeredDown = false;
   $(document).keyup(function(e) {
@@ -24,6 +27,7 @@ function FloatyDuck() {
 
 // Initialize
 FloatyDuck.prototype.init = function() {
+
   if(this.DEBUG) {
     $('#debug_data').css('display', 'block');
   }
@@ -35,21 +39,21 @@ FloatyDuck.prototype.init = function() {
   this.Scroll.setSize('w',this.getSize('w')*1+10);
   this.Scroll.setSize('h',this.getSize('h')-2);
   this.elems.push(this.Scroll);
-  
-  // set structure
-  $('body').append(this.obj);
 
   // create duck and position in center
   this.Duck = new Duck();
   this.Duck.setPos('x',this.getSize('w')/2);
   this.Duck.setPos('y',this.getSize('h')/2);
   this.elems.push(this.Duck);
-
+  
   this.StartScreen = new StartScreen();
   this.StartScreen.setPos('x',this.getSize('w')/2);
   this.StartScreen.setPos('y',this.getSize('h')/2);
   this.elems.push(this.StartScreen);
 
+  // set structure
+  $('body').append(this.obj);
+  
   this.elems.forEach(function(elem) {
     this.obj.append(elem.obj);
   }.bind(this))
@@ -68,6 +72,13 @@ FloatyDuck.prototype.update = function() {
   this.elems.forEach(function(elem) {
     elem.update();
   })
+  
+  // check for collisions
+  if( !this.Duck.isInside(this) ) {
+    alert('Lose!');
+    this.stop();
+    this.run();
+  }
 
   if (this.Keyboard.isDownPressed()) {
     if(!this.started) {
@@ -86,12 +97,13 @@ FloatyDuck.prototype.update = function() {
 
 // This method draws the current scene
 FloatyDuck.prototype.render = function() {
+
+  // run parent render
+  FloatyElement.prototype.render.apply(this,arguments);
+
   this.elems.forEach(function(elem) {
     elem.render();
   })
-  
-  // render play area
-  this.obj.css('width',this.getSize('w')+'px').css('height',this.getSize('h')+'px');
 
   if(this.DEBUG) {
   
@@ -111,15 +123,20 @@ FloatyDuck.prototype.render = function() {
 }
 
 FloatyDuck.prototype.run = function() {
+
   this.init();
   
   var updateEvery = 1000 / this.UPDATES_PER_SECOND;
   var lastUpdate = Date.now();
   
-  setInterval(function() {
+  this.INTERVAL_ID = setInterval(function() {
     this.update();
     this.render();
   }.bind(this), updateEvery);
+}
+
+FloatyDuck.prototype.stop = function() {
+  clearInterval(this.INTERVAL_ID);
 }
 
 // Keyboard input manager
