@@ -7,12 +7,18 @@ function FloatyDuck() {
   
   this.DEBUG = true;
   this.UPDATES_PER_SECOND = 60;
-  this.DELAY_BEFORE_START = 6000;
+  this.INTERVAL_ID = 0;
+  this.TIMEOUT_ID = 0;
+  this.FIRST_OBSTACLE = 2000;
+  this.SCROLL_RATE = 1.4;
+  this.OBSTACLE_WIDTH = 50;
 
   this.frameCount = 0;
+  this.obstacleCount = 0;
     
   this.size = { w: 320, h: 480 };
-  
+  this.setBoundMod( {'b': -35 } );
+    
   // need to track only once per press
   this.registeredDown = false;
   $(document).keyup(function(e) {
@@ -24,79 +30,91 @@ function FloatyDuck() {
 
 // Initialize
 FloatyDuck.prototype.init = function() {
-  if(this.DEBUG) {
-    $('#debug_data').css('display', 'block');
-  }
 
   this.elems = [];
+    
+  // when overriding init, pass child init as an argument so we can do pre_ and post_ hooks in order
+  FloatyElement.prototype.init.apply(this,[function() {
+    if(this.DEBUG) {
+      $('#debug_data').css('display', 'block');
+    }
+    
+    // generate game area   
+    this.Scroll = new Scroll();
+    this.Scroll.setSize('w',this.getSize('w')*1+10);
+    this.Scroll.setSize('h',this.getSize('h')-2);
+    this.Scroll.setRate(this.SCROLL_RATE);
+    this.elems.push(this.Scroll);
+    
+    // create duck and position in center
+    this.Duck = new Duck();
+    this.Duck.setPos('x',this.getSize('w')/2);
+    this.Duck.setPos('y',this.getSize('h')/2);
+    this.elems.push(this.Duck);
+    
+    this.StartScreen = new StartScreen();
+    this.StartScreen.setPos('x',this.getSize('w')/2);
+    this.StartScreen.setPos('y',this.getSize('h')/2);
+    this.elems.push(this.StartScreen);
+    
+    /* removed in merge
+    this.Ground = new Ground(this.getSize('w'));
+    this.Ground.setPos('y', this.getSize('h')-35);
+    this.elems.push(this.Ground);
+    
+    this.elems.forEach(function(elem) {
+      this.obj.append(elem.obj);
+    }.bind(this))
+    */
 
-  // generate game area
-  this.Scroll = new Scroll();
-  this.Scroll.setSize('w',this.getSize('w')*1+10);
-  this.Scroll.setSize('h',this.getSize('h')-2);
-  this.elems.push(this.Scroll);
-
-  this.Ground = new Ground(this.getSize('w'));
-  this.Ground.setPos('y', this.getSize('h')-35);
-  this.elems.push(this.Ground);
-  
-  // set structure
-  $('body').append(this.obj);
-
-  // create duck and position in center
-  this.Duck = new Duck();
-  this.Duck.setPos('x',this.getSize('w')/2);
-  this.Duck.setPos('y',this.getSize('h')/2);
-  this.elems.push(this.Duck);
-
-  this.StartScreen = new StartScreen();
-  this.StartScreen.setPos('x',this.getSize('w')/2);
-  this.StartScreen.setPos('y',this.getSize('h')/2);
-  this.elems.push(this.StartScreen);
-
-  this.elems.forEach(function(elem) {
-    this.obj.append(elem.obj);
-  }.bind(this))
-  
-  this.started = false;
-  this.collision = false;
-  
-  this.Keyboard = new Keyboard();
-  
-  if(this.DEBUG) {
-    this.obj.css('overflow','visible');
-  }
+    // set structure
+    $('body').append(this.obj);
+    
+    this.started = false;
+    this.collision = false;
+    
+    this.Keyboard = new Keyboard();
+    
+    if(this.DEBUG) {
+      this.obj.css('overflow','visible');
+    }
+  }.bind(this)]);  
 }
 
 // This method updates the world (i.e., input, physics, etc)
 FloatyDuck.prototype.update = function() {
-  if(this.collision) {
-    return;
-  }
 
+  // run parent update
+  FloatyElement.prototype.update.apply(this,arguments);
+  
+  // check for collisions
   var collision = false;
+  if( !this.Duck.isInside(this) ) {
+    collision = true;
+  }
+  
   this.elems.forEach(function(elem) {
-    elem.update();
-
-    if(elem.collidable && this.Duck.isCollided(elem)) {
+  
+    if(elem.collidable && this.Duck.isTouching(elem)) {
       collision = true;
     }
   }.bind(this));
-
-  if(collision) {
+  
+  if( collision ) {
+    this.collision = true;
+    
     if(this.DEBUG) {
       $('#collision').html("COLLISION");
     }
-
-    this.collision = true;
-    return;
+    
+    this.stop();
+    this.run();
   }
+  
 
   if (this.Keyboard.isDownPressed()) {
     if(!this.started) {
-      this.Duck.start();
-      this.StartScreen.hide();
-      this.started = true;
+      this.start();
     }
 
     if( this.registeredDown == false ) {
@@ -109,12 +127,9 @@ FloatyDuck.prototype.update = function() {
 
 // This method draws the current scene
 FloatyDuck.prototype.render = function() {
-  this.elems.forEach(function(elem) {
-    elem.render();
-  })
   
-  // render play area
-  this.obj.css('width',this.getSize('w')+'px').css('height',this.getSize('h')+'px');
+  // run parent render
+  FloatyElement.prototype.render.apply(this,arguments);
 
   if(this.DEBUG) {
   
@@ -134,15 +149,47 @@ FloatyDuck.prototype.render = function() {
 }
 
 FloatyDuck.prototype.run = function() {
+
   this.init();
   
   var updateEvery = 1000 / this.UPDATES_PER_SECOND;
-  var lastUpdate = Date.now();
   
-  setInterval(function() {
+  this.INTERVAL_ID = setInterval(function() {
     this.update();
     this.render();
   }.bind(this), updateEvery);
+  
+}
+FloatyDuck.prototype.start = function() {
+  this.Duck.start();
+  this.StartScreen.hide();
+  this.started = true;
+  this.TIMEOUT_ID = setTimeout(this.addObstacle.bind(this),this.FIRST_OBSTACLE);
+}
+FloatyDuck.prototype.stop = function() {
+  clearTimeout(this.TIMEOUT_ID);
+  clearInterval(this.INTERVAL_ID);
+  this.started = false;
+  
+  this.elems.forEach(function(elem){
+    elem.obj.remove();
+  });
+  
+}
+
+FloatyDuck.prototype.addObstacle = function() {
+  this.Obstacle = new Obstacle(this.obstacleCount++);
+  this.Obstacle.setPos('x',this.getSize('w'));
+  this.Obstacle.setPos('y',0);
+  this.Obstacle.setSize('w',this.OBSTACLE_WIDTH);
+  this.Obstacle.setRate(this.SCROLL_RATE);
+  
+  this.elems.push(this.Obstacle);
+  this.obj.append(this.Obstacle.obj);
+  
+  this.Obstacle.init();
+  
+  this.TIMEOUT_ID = setTimeout(this.addObstacle.bind(this),this.FIRST_OBSTACLE);
 }
 
 // Keyboard input manager

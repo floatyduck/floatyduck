@@ -5,7 +5,7 @@ function Scroll() {
   FloatyElement.apply(this,['scroll']);
   
   // set defaults
-  this.rate = 1.4;
+  this.rate = 1;
   
   this.pos_bg = { x: 0, y: 0 };
 }
