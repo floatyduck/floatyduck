@@ -3,20 +3,52 @@ function FloatyElement( id ) {
 
   this.pos = {x: 0, y: 0};
   this.size = {w: 0, h: 0};
+
+  this.elems = [];
   
-  // value to adjust the element's boundaries
+  // values to adjust the element's boundaries
   this.bound_mod = { t: 0, b: 0, l: 0, r: 0 };
   
   // THERE CAN BE ONLY ONE (id)
   $('#'+id).remove();
-  
+    
   this.obj = $('<div id="'+id+'"></div>');
   
 }
+FloatyElement.prototype.init = function() {
 
-FloatyElement.prototype.update = function() { }
+  // allow for supplied init
+  if( arguments.length > 0 ) {
+    arguments[0].apply(this);
+  }
+    
+  this.post_init();
+}
+
+FloatyElement.prototype.post_init = function() {
+  
+  this.elems.forEach(function(elem) {
+    this.obj.append(elem.obj);
+  }.bind(this))
+  
+  this.elems.forEach(function(elem) {
+    elem.init();
+  })
+}
+
+FloatyElement.prototype.update = function() { 
+  this.elems.forEach(function(elem) {
+    elem.update();
+  })
+}
+
 
 FloatyElement.prototype.render = function() {
+  
+  this.elems.forEach(function(elem) {
+    elem.render();
+  })
+  
   this.obj.css('width',this.getSize('w')+'px')
           .css('height',this.getSize('h')+'px')
           .css('top',this.getPos('y')+'px')

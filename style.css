@@ -107,3 +107,9 @@ body {
   font-family: 'Press Start 2P', 'Comic Sans MS', cursive, sans-serif;
   text-transform: uppercase;
 }
+
+.obstacle {
+  position: absolute;
+  border: solid 1px red;
+  z-index: 4;
+}
