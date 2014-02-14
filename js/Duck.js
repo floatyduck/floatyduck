@@ -11,6 +11,7 @@ function Duck() {
   this.lookDown = false;
   this.lastFlap = 0;
   this.started = false;
+  this.bound_mod = { t: 8, b: -8, l: 4, r: -4 };
 }
 
 Duck.prototype.update = function() {
