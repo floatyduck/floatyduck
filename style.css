@@ -113,3 +113,6 @@ body {
   border: solid 1px red;
   z-index: 4;
 }
+#ground {
+  position: absolute;
+}

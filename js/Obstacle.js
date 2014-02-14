@@ -16,6 +16,7 @@ function Obstacle() {
   
   this.obj.addClass('obstacle');
   this.obj.css('border','solid 1px red');
+  this.collidable = true;
   
 }
 

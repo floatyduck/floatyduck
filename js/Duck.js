@@ -85,3 +85,27 @@ Duck.prototype.changeSpeed = function(amount) {
 Duck.prototype.getSpeed = function() {
   return this.y_speed;
 }
+  
+FloatyElement.prototype.isCollided = function(elem) {
+  var duck_left = this.getRealPos('x');
+  var duck_top = this.getRealPos('y');
+  var duck_right = duck_left + this.getSize('w');
+  var duck_bottom = duck_top + this.getSize('h');
+  
+  // Allow a buffer
+  duck_left += 4;
+  duck_right -= 4;
+  duck_top += 8;
+  duck_bottom -= 8;
+
+  var elem_left = elem.getPos('x');
+  var elem_top = elem.getPos('y');
+  var elem_right = elem_left + elem.getSize('w');
+  var elem_bottom = elem_top + elem.getSize('h');
+
+  return overlap(duck_left, duck_right, elem_left, elem_right) && overlap(duck_top, duck_bottom, elem_top, elem_bottom);
+}
+
+function overlap(a1, a2, b1, b2) {
+  return a1 <= b1 && a2 >= b1 || b1 <= a1 && b2 >= a1;
+}

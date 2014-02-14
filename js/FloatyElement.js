@@ -13,7 +13,7 @@ function FloatyElement( id ) {
   $('#'+id).remove();
     
   this.obj = $('<div id="'+id+'"></div>');
-  
+  this.collidable = false;
 }
 FloatyElement.prototype.init = function() {
 

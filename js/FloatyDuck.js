@@ -32,7 +32,6 @@ function FloatyDuck() {
 FloatyDuck.prototype.init = function() {
 
   this.elems = [];
-  this.obstacles = [];
     
   // when overriding init, pass child init as an argument so we can do pre_ and post_ hooks in order
   FloatyElement.prototype.init.apply(this,[function() {
@@ -57,19 +56,29 @@ FloatyDuck.prototype.init = function() {
     this.StartScreen.setPos('x',this.getSize('w')/2);
     this.StartScreen.setPos('y',this.getSize('h')/2);
     this.elems.push(this.StartScreen);
+    
+    /* removed in merge
+    this.Ground = new Ground(this.getSize('w'));
+    this.Ground.setPos('y', this.getSize('h')-35);
+    this.elems.push(this.Ground);
+    
+    this.elems.forEach(function(elem) {
+      this.obj.append(elem.obj);
+    }.bind(this))
+    */
 
     // set structure
     $('body').append(this.obj);
     
     this.started = false;
+    this.collision = false;
     
     this.Keyboard = new Keyboard();
     
     if(this.DEBUG) {
       this.obj.css('overflow','visible');
     }
-  }.bind(this)]);
-  
+  }.bind(this)]);  
 }
 
 // This method updates the world (i.e., input, physics, etc)
@@ -79,20 +88,29 @@ FloatyDuck.prototype.update = function() {
   FloatyElement.prototype.update.apply(this,arguments);
   
   // check for collisions
-  lose = false;
+  var collision = false;
   if( !this.Duck.isInside(this) ) {
-    lose = true;
+    collision = true;
   }
-  this.obstacles.forEach(function(obstacle) {
-    if(this.Duck.isTouching(obstacle)){
-      lose = true;
+  
+  this.elems.forEach(function(elem) {
+  
+    if(elem.collidable && this.Duck.isTouching(elem)) {
+      collision = true;
     }
   }.bind(this));
   
-  if( lose ) {
+  if( collision ) {
+    this.collision = true;
+    
+    if(this.DEBUG) {
+      $('#collision').html("COLLISION");
+    }
+    
     this.stop();
     this.run();
   }
+  
 
   if (this.Keyboard.isDownPressed()) {
     if(!this.started) {
@@ -167,7 +185,6 @@ FloatyDuck.prototype.addObstacle = function() {
   this.Obstacle.setRate(this.SCROLL_RATE);
   
   this.elems.push(this.Obstacle);
-  this.obstacles.push(this.Obstacle);
   this.obj.append(this.Obstacle.obj);
   
   this.Obstacle.init();
