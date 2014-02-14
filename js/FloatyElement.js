@@ -3,7 +3,7 @@ function FloatyElement( id ) {
   this.pos = {x: 0, y: 0};
   this.size = {w: 0, h: 0};
   this.obj = $('<div id="'+id+'"></div>');
-  
+  this.collidable = false;
 }
 
 FloatyElement.prototype.update = function() { }

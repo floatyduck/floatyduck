@@ -35,6 +35,10 @@ FloatyDuck.prototype.init = function() {
   this.Scroll.setSize('w',this.getSize('w')*1+10);
   this.Scroll.setSize('h',this.getSize('h')-2);
   this.elems.push(this.Scroll);
+
+  this.Ground = new Ground(this.getSize('w'));
+  this.Ground.setPos('y', this.getSize('h')-35);
+  this.elems.push(this.Ground);
   
   // set structure
   $('body').append(this.obj);
@@ -55,6 +59,7 @@ FloatyDuck.prototype.init = function() {
   }.bind(this))
   
   this.started = false;
+  this.collision = false;
   
   this.Keyboard = new Keyboard();
   
@@ -65,9 +70,27 @@ FloatyDuck.prototype.init = function() {
 
 // This method updates the world (i.e., input, physics, etc)
 FloatyDuck.prototype.update = function() {
+  if(this.collision) {
+    return;
+  }
+
+  var collision = false;
   this.elems.forEach(function(elem) {
     elem.update();
-  })
+
+    if(elem.collidable && this.Duck.isCollided(elem)) {
+      collision = true;
+    }
+  }.bind(this));
+
+  if(collision) {
+    if(this.DEBUG) {
+      $('#collision').html("COLLISION");
+    }
+
+    this.collision = true;
+    return;
+  }
 
   if (this.Keyboard.isDownPressed()) {
     if(!this.started) {
