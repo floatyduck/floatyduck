@@ -9,9 +9,10 @@ function FloatyDuck() {
   this.UPDATES_PER_SECOND = 60;
   this.INTERVAL_ID = 0;
   this.TIMEOUT_ID = 0;
-  this.FIRST_OBSTACLE = 2000;
+  this.FIRST_OBSTACLE = 2500;
   this.SCROLL_RATE = 1.4;
   this.OBSTACLE_WIDTH = 50;
+  this.OBSTACLE_GAP_SIZE = 170;
 
   this.frameCount = 0;
   this.obstacleCount = 0;
@@ -154,7 +155,8 @@ FloatyDuck.prototype.start = function() {
   this.Duck.start();
   this.StartScreen.hide();
   this.started = true;
-  this.TIMEOUT_ID = setTimeout(this.addObstacle.bind(this),this.FIRST_OBSTACLE);
+  // this.TIMEOUT_ID = setTimeout(this.addObstacle.bind(this),this.FIRST_OBSTACLE);
+  this.TIMEOUT_ID = setTimeout(this.addObstaclePair.bind(this),this.FIRST_OBSTACLE);
 }
 FloatyDuck.prototype.stop = function() {
   clearTimeout(this.TIMEOUT_ID);
@@ -167,19 +169,49 @@ FloatyDuck.prototype.stop = function() {
   
 }
 
-FloatyDuck.prototype.addObstacle = function() {
-  this.Obstacle = new Obstacle(this.obstacleCount++);
-  this.Obstacle.setPos('x',this.getSize('w'));
-  this.Obstacle.setPos('y',0);
-  this.Obstacle.setSize('w',this.OBSTACLE_WIDTH);
-  this.Obstacle.setRate(this.SCROLL_RATE);
+// Removed in favour of addObstaclePair
+// FloatyDuck.prototype.addObstacle = function() {
+//   this.Obstacle = new Obstacle(this.obstacleCount++);
+//   this.Obstacle.setPos('x',this.getSize('w'));
+//   this.Obstacle.setPos('y',0);
+//   this.Obstacle.setSize('w',this.OBSTACLE_WIDTH);
+//   this.Obstacle.setRate(this.SCROLL_RATE);
   
-  this.elems.push(this.Obstacle);
-  this.obj.append(this.Obstacle.obj);
+//   this.elems.push(this.Obstacle);
+//   this.obj.append(this.Obstacle.obj);
   
-  this.Obstacle.init();
+//   this.Obstacle.init();
   
-  this.TIMEOUT_ID = setTimeout(this.addObstacle.bind(this),this.FIRST_OBSTACLE);
+//   this.TIMEOUT_ID = setTimeout(this.addObstacle.bind(this),this.FIRST_OBSTACLE);
+// }
+
+FloatyDuck.prototype.addObstaclePair = function() {
+  var maxHeight = this.getSize('h');
+  var gapTop = Math.ceil(Math.random() * (maxHeight - this.OBSTACLE_GAP_SIZE));
+  var startX = this.getSize('w');
+
+  var topObstacle = new Obstacle(this.obstacleCount++);
+  topObstacle.setPos('x',startX);
+  topObstacle.setPos('y',0);
+  topObstacle.setSize('w',this.OBSTACLE_WIDTH);
+  topObstacle.setSize('h',gapTop);
+  topObstacle.setRate(this.SCROLL_RATE);
+
+  this.elems.push(topObstacle);
+  this.obj.append(topObstacle.obj);
+
+  var bottomY = gapTop + this.OBSTACLE_GAP_SIZE;
+  var bottomObstacle = new Obstacle(this.obstacleCount++);
+  bottomObstacle.setPos('x',startX);
+  bottomObstacle.setPos('y',bottomY);
+  bottomObstacle.setSize('w',this.OBSTACLE_WIDTH);
+  bottomObstacle.setSize('h',maxHeight - bottomY);
+  bottomObstacle.setRate(this.SCROLL_RATE);
+
+  this.elems.push(bottomObstacle);
+  this.obj.append(bottomObstacle.obj);
+
+  this.TIMEOUT_ID = setTimeout(this.addObstaclePair.bind(this),this.FIRST_OBSTACLE);
 }
 
 // Keyboard input manager
