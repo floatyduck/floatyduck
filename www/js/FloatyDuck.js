@@ -6,7 +6,7 @@ function FloatyDuck() {
   FloatyElement.apply(this,['play_area']);
   
   this.DEBUG = true;
-  this.DEVICE_TYPE = 'phone';
+  this.DEVICE_TYPE = 'browser'; // Alternative: 'phone'
   this.UPDATES_PER_SECOND = 60;
   this.INTERVAL_ID = 0;
   this.TIMEOUT_ID = 0;
