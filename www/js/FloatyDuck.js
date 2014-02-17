@@ -6,6 +6,7 @@ function FloatyDuck() {
   FloatyElement.apply(this,['play_area']);
   
   this.DEBUG = true;
+  this.DEVICE_TYPE = 'phone';
   this.UPDATES_PER_SECOND = 60;
   this.INTERVAL_ID = 0;
   this.TIMEOUT_ID = 0;
@@ -19,14 +20,7 @@ function FloatyDuck() {
     
   this.size = { w: 320, h: 480 };
   this.setBoundMod( {'b': -35 } );
-    
-  // need to track only once per press
-  this.registeredDown = false;
-  $(document).keyup(function(e) {
-    switch(e.keyCode) {
-      case 40: this.registeredDown = false; break;
-    }
-  }.bind(this))
+  
 }
 
 // Initialize
@@ -64,7 +58,11 @@ FloatyDuck.prototype.init = function() {
     this.started = false;
     this.collision = false;
     
-    this.Keyboard = new Keyboard();
+    this.InputManager = new InputManager(this.DEVICE_TYPE);
+    // need to track only once per press
+    this.InputManager.onTapEnd(function() {
+      this.registeredDown = false;;
+    }.bind(this));
     
     if(this.DEBUG) {
       this.obj.css('overflow','visible');
@@ -103,7 +101,7 @@ FloatyDuck.prototype.update = function() {
   }
   
 
-  if (this.Keyboard.isDownPressed()) {
+  if (this.InputManager.isTapped()) {
     if(!this.started) {
       this.start();
     }
@@ -130,8 +128,8 @@ FloatyDuck.prototype.render = function() {
     // Write out debug data
     $('#frame_count').html(this.frameCount);
     var activeKeys = "";
-    if(this.Keyboard.downPressed) {
-      activeKeys += "DOWN, ";
+    if(this.InputManager.isTapped()) {
+      activeKeys += "TAP!";
     }
     $('#active_keys').html(activeKeys);
     // TODO: Duck X and Y
@@ -140,7 +138,6 @@ FloatyDuck.prototype.render = function() {
 }
 
 FloatyDuck.prototype.run = function() {
-
   this.init();
   
   var updateEvery = 1000 / this.UPDATES_PER_SECOND;
@@ -214,8 +211,68 @@ FloatyDuck.prototype.addObstaclePair = function() {
   this.TIMEOUT_ID = setTimeout(this.addObstaclePair.bind(this),this.FIRST_OBSTACLE);
 }
 
+function InputManager(device_type) {
+
+  // Default is keyboard
+  this.Input = undefined;
+
+  if(device_type == 'phone') {
+    this.Input = new TouchScreen();
+  } else {
+    this.Input = new Keyboard();
+  }
+}
+
+InputManager.prototype.isTapped = function() {
+  return this.Input.isTapped();
+}
+
+InputManager.prototype.onTapEnd = function(callback) {
+  this.Input.onTapEnd(callback);
+}
+
+function Input() { 
+  this.onTapEnd = undefined;
+}
+
+Input.prototype.isTapped = function() {
+  return false;
+}
+
+Input.prototype.onTapEnd = function(callback) {
+  this.onTapEnd = callback;
+}
+
+// Extend Input
+TouchScreen.prototype = new Input();
+
+function TouchScreen() {
+  this.mouseover = false;
+
+  $(document).bind('touchstart', function() {
+    this.mouseover = true;
+  }.bind(this));
+
+  $(document).bind('touchend', function() {
+    this.mouseover = false;
+
+    if(this.onTapEnd != undefined) {
+      this.onTapEnd();
+    }
+  }.bind(this));
+}
+
+TouchScreen.prototype.isTapped = function() {
+  return this.mouseover;
+}
+
+TouchScreen.prototype.onTapEnd = Input.prototype.onTapEnd;
+
+// Extend Input
+Keyboard.prototype = new Input();
+
 // Keyboard input manager
-Keyboard = function() {
+function Keyboard() {
   this.downPressed = false;
 
   $(document).keydown(function(e) {
@@ -226,11 +283,20 @@ Keyboard = function() {
 
   $(document).keyup(function(e) {
     switch(e.keyCode) {
-      case 40: this.downPressed = false; break;
+      case 40: {
+        this.downPressed = false; 
+
+        if(this.onTapEnd != undefined) {
+          this.onTapEnd();
+        }
+        break;
+      }
     }
   }.bind(this))
 }
 
-Keyboard.prototype.isDownPressed = function() {
+Keyboard.prototype.isTapped = function() {
   return this.downPressed;
 }
+
+Keyboard.prototype.onTapEnd = Input.prototype.onTapEnd;
