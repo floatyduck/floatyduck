@@ -56,16 +56,6 @@ FloatyDuck.prototype.init = function() {
     this.StartScreen.setPos('x',this.getSize('w')/2);
     this.StartScreen.setPos('y',this.getSize('h')/2);
     this.elems.push(this.StartScreen);
-    
-    /* removed in merge
-    this.Ground = new Ground(this.getSize('w'));
-    this.Ground.setPos('y', this.getSize('h')-35);
-    this.elems.push(this.Ground);
-    
-    this.elems.forEach(function(elem) {
-      this.obj.append(elem.obj);
-    }.bind(this))
-    */
 
     // set structure
     $('body').append(this.obj);
