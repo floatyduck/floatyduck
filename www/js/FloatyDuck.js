@@ -108,6 +108,7 @@ FloatyDuck.prototype.update = function() {
 
     this.GameOverScreen.setScore(this.score);
     this.GameOverScreen.show();
+    saveHighScore(this.score);
     this.stop();
 
     setTimeout(this.reset.bind(this), 2000);
@@ -222,6 +223,17 @@ FloatyDuck.prototype.addObstaclePair = function() {
   this.obj.append(bottomObstacle.obj);
 
   this.TIMEOUT_ID = setTimeout(this.addObstaclePair.bind(this),this.FIRST_OBSTACLE);
+}
+
+function saveHighScore(score) {
+  score = Math.floor(score);
+
+  if(localStorage != undefined) {
+    var prevHighScore = parseInt(localStorage.getItem('high_score'));
+    if(isNaN(prevHighScore) || prevHighScore < score) {
+      localStorage.setItem('high_score', score);
+    }
+  }
 }
 
 function InputManager(device_type) {
