@@ -20,7 +20,6 @@ function FloatyDuck() {
     
   this.size = { w: 320, h: 480 };
   this.setBoundMod( {'b': -35 } );
-  
 }
 
 // Initialize
@@ -60,6 +59,7 @@ FloatyDuck.prototype.init = function() {
     
     this.InputManager = new InputManager(this.DEVICE_TYPE);
     // need to track only once per press
+    this.registeredDown = false;
     this.InputManager.onTapEnd(function() {
       this.registeredDown = false;;
     }.bind(this));
