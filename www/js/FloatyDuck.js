@@ -14,7 +14,7 @@ function FloatyDuck() {
   this.SCROLL_RATE = 1.4;
   this.OBSTACLE_WIDTH = 50;
   this.OBSTACLE_GAP_SIZE = 170;
-  this.SCORE_MULTIPLIER = 1.013;
+  this.SCORE_MULTIPLIER = 1.008;
 
   this.frameCount = 0;
   this.obstacleCount = 0;
@@ -106,6 +106,7 @@ FloatyDuck.prototype.update = function() {
       $('#collision').html("COLLISION");
     }
 
+    this.GameOverScreen.setScore(this.score);
     this.GameOverScreen.show();
     this.stop();
 
@@ -114,11 +115,14 @@ FloatyDuck.prototype.update = function() {
     $('#collision').html('');
   }
   
+  // Only start scoring when duck passes first obstacle
   if(!this.pastFirstObstacle && this.firstObstacle != undefined && this.Duck.getPos('x') > this.firstObstacle.getPos('x')) {
     this.pastFirstObstacle = true;
     this.score = 1.0;
   }
-  this.score *= this.SCORE_MULTIPLIER;
+
+  // Use random in the score calc for some fun variation
+  this.score *= (1 + ((this.SCORE_MULTIPLIER - 1) * Math.random()));
 
   if (this.InputManager.isTapped()) {
     if(!this.started) {

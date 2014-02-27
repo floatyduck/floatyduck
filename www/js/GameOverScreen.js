@@ -27,6 +27,11 @@ GameOverScreen.prototype.getPos = function(which) {
   return pos;
 }
 
+GameOverScreen.prototype.setScore = function(score) {
+  score = Math.floor(score);
+  this.obj.append("<br />"+score);
+}
+
 GameOverScreen.prototype.show = function() {
   this.obj.css('display', 'block');
 }
