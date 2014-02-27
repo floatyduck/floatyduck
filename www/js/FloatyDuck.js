@@ -18,7 +18,7 @@ function FloatyDuck() {
   this.frameCount = 0;
   this.obstacleCount = 0;
     
-  this.size = { w: 320, h: 480 };
+  this.size = { w: window.innerWidth, h: window.innerHeight };
   this.setBoundMod( {'b': -35 } );
 }
 
