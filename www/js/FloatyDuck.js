@@ -50,6 +50,11 @@ FloatyDuck.prototype.init = function() {
     this.StartScreen.setPos('x',this.getSize('w')/2);
     this.StartScreen.setPos('y',this.getSize('h')/2);
     this.elems.push(this.StartScreen);
+    
+    this.GameOverScreen = new GameOverScreen();
+    this.GameOverScreen.setPos('x',this.getSize('w')/2);
+    this.GameOverScreen.setPos('y',this.getSize('h')/2);
+    this.elems.push(this.GameOverScreen);
 
     // set structure
     $('body').append(this.obj);
@@ -95,9 +100,11 @@ FloatyDuck.prototype.update = function() {
     if(this.DEBUG) {
       $('#collision').html("COLLISION");
     }
-    
+
+    this.GameOverScreen.show();
     this.stop();
-    this.run();
+
+    setTimeout(this.reset.bind(this), 2000);
   }
   
 
@@ -132,7 +139,7 @@ FloatyDuck.prototype.render = function() {
       activeKeys += "TAP!";
     }
     $('#active_keys').html(activeKeys);
-    // TODO: Duck X and Y
+    // TODO: Duck Y
     // TODO: Canvas size
   }
 }
@@ -152,35 +159,22 @@ FloatyDuck.prototype.start = function() {
   this.Duck.start();
   this.StartScreen.hide();
   this.started = true;
-  // this.TIMEOUT_ID = setTimeout(this.addObstacle.bind(this),this.FIRST_OBSTACLE);
   this.TIMEOUT_ID = setTimeout(this.addObstaclePair.bind(this),this.FIRST_OBSTACLE);
 }
 FloatyDuck.prototype.stop = function() {
   clearTimeout(this.TIMEOUT_ID);
   clearInterval(this.INTERVAL_ID);
   this.started = false;
-  
+}
+
+FloatyDuck.prototype.reset = function() {
   this.elems.forEach(function(elem){
     elem.obj.remove();
   });
-  
-}
 
-// Removed in favour of addObstaclePair
-// FloatyDuck.prototype.addObstacle = function() {
-//   this.Obstacle = new Obstacle(this.obstacleCount++);
-//   this.Obstacle.setPos('x',this.getSize('w'));
-//   this.Obstacle.setPos('y',0);
-//   this.Obstacle.setSize('w',this.OBSTACLE_WIDTH);
-//   this.Obstacle.setRate(this.SCROLL_RATE);
-  
-//   this.elems.push(this.Obstacle);
-//   this.obj.append(this.Obstacle.obj);
-  
-//   this.Obstacle.init();
-  
-//   this.TIMEOUT_ID = setTimeout(this.addObstacle.bind(this),this.FIRST_OBSTACLE);
-// }
+  this.run();
+
+}
 
 FloatyDuck.prototype.addObstaclePair = function() {
   var maxHeight = this.getSize('h');

@@ -108,6 +108,18 @@ body {
   text-transform: uppercase;
 }
 
+#game_over_screen {
+  position: absolute;
+  z-index: 10;
+  text-align: center;
+  color: #eee;
+  font-size: 48px;
+  line-height: 1.2em;
+  font-family: 'Press Start 2P', 'Comic Sans MS', cursive, sans-serif;
+  text-transform: uppercase;
+  display: none;
+}
+
 .obstacle {
   position: absolute;
   border: solid 1px red;
