@@ -122,6 +122,7 @@ body {
 
 .obstacle {
   position: absolute;
-  border: solid 1px red;
   z-index: 4;
+  background: url('img/weed.png') top left repeat-y;
+  background-size: 100% auto;
 }
