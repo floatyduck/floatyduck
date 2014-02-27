@@ -14,6 +14,7 @@ function FloatyDuck() {
   this.SCROLL_RATE = 1.4;
   this.OBSTACLE_WIDTH = 50;
   this.OBSTACLE_GAP_SIZE = 170;
+  this.SCORE_MULTIPLIER = 1.013;
 
   this.frameCount = 0;
   this.obstacleCount = 0;
@@ -26,6 +27,10 @@ function FloatyDuck() {
 FloatyDuck.prototype.init = function() {
 
   this.elems = [];
+
+  this.score = 0.0;
+  this.firstObstacle = undefined;
+  this.pastFirstObstacle = false;
     
   // when overriding init, pass child init as an argument so we can do pre_ and post_ hooks in order
   FloatyElement.prototype.init.apply(this,[function() {
@@ -105,8 +110,15 @@ FloatyDuck.prototype.update = function() {
     this.stop();
 
     setTimeout(this.reset.bind(this), 2000);
+  } else if(this.DEBUG) {
+    $('#collision').html('');
   }
   
+  if(!this.pastFirstObstacle && this.firstObstacle != undefined && this.Duck.getPos('x') > this.firstObstacle.getPos('x')) {
+    this.pastFirstObstacle = true;
+    this.score = 1.0;
+  }
+  this.score *= this.SCORE_MULTIPLIER;
 
   if (this.InputManager.isTapped()) {
     if(!this.started) {
@@ -123,7 +135,6 @@ FloatyDuck.prototype.update = function() {
 
 // This method draws the current scene
 FloatyDuck.prototype.render = function() {
-  
   // run parent render
   FloatyElement.prototype.render.apply(this,arguments);
 
@@ -134,6 +145,7 @@ FloatyDuck.prototype.render = function() {
 
     // Write out debug data
     $('#frame_count').html(this.frameCount);
+    $('#score').html(this.score);
     var activeKeys = "";
     if(this.InputManager.isTapped()) {
       activeKeys += "TAP!";
@@ -173,7 +185,6 @@ FloatyDuck.prototype.reset = function() {
   });
 
   this.run();
-
 }
 
 FloatyDuck.prototype.addObstaclePair = function() {
@@ -187,6 +198,10 @@ FloatyDuck.prototype.addObstaclePair = function() {
   topObstacle.setSize('w',this.OBSTACLE_WIDTH);
   topObstacle.setSize('h',gapTop);
   topObstacle.setRate(this.SCROLL_RATE);
+
+  if(this.firstObstacle == undefined) {
+    this.firstObstacle = topObstacle;
+  }
 
   this.elems.push(topObstacle);
   this.obj.append(topObstacle.obj);
